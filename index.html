@@ -194,7 +194,7 @@
 
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble';
-        bubble.innerHTML = <span class="chat-user" onclick="showUser('${m.username}')">${m.charname}</span>${escapeHtml(m.text)};
+        bubble.innerHTML = `<span class="chat-user" onclick="showUser('${m.username}')">${m.charname}</span>${escapeHtml(m.text)}`;
 
         msgWrap.appendChild(avatar);
         msgWrap.appendChild(bubble);
