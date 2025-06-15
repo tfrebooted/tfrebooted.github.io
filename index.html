@@ -75,7 +75,10 @@
     <div class="login-box">
       <h2>Login</h2>
       <input id="username" placeholder="Username" autocomplete="off" />
-      <input id="password" type="password" placeholder="Password" autocomplete="off" />
+      <div style="position: relative;">
+        <input id="password" type="password" placeholder="Password" autocomplete="off" style="padding-right: 40px;" />
+        <span onclick="togglePassword('password')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #0ff;">👁️</span>
+      </div>
       <button onclick="submitAuth()">Enter</button>
       <p style="margin-top:10px; font-size: 0.9em;">
         <span onclick="showSignup()" style="color:#0ff; cursor:pointer;">Sign Up</span>
@@ -85,7 +88,10 @@
   <div id="signupBox" class="login-box" style="display:none;">
     <h2>Sign Up</h2>
     <input id="newUsername" placeholder="New Username" autocomplete="off" />
-    <input id="newPassword" type="password" placeholder="New Password" autocomplete="off" />
+    <div style="position: relative;">
+      <input id="newPassword" type="password" placeholder="New Password" autocomplete="off" style="padding-right: 40px;" />
+      <span onclick="togglePassword('newPassword')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #0ff;">👁️</span>
+    </div>
     <button onclick="submitSignup()">Create Account</button>
     <p style="margin-top:10px; font-size: 0.9em;">
       <span onclick="hideSignup()" style="color:#0ff; cursor:pointer;">Back to Login</span>
@@ -222,6 +228,11 @@
       });
     }
 
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
     function renderChatroom() {
       const roomHeader = document.getElementById('roomHeader');
       const chatDiv = document.getElementById('chatroom');
@@ -277,10 +288,11 @@
     }
 
     function signOut() {
-      localStorage.removeItem('rpchat_user');
-      location.reload(); // reset app to login state
+      if (confirm('Are you sure you want to sign out?')) {
+        localStorage.removeItem('rpchat_user');
+        location.reload();
+      }
     }
-
     
     async function submitSignup() {
       const newUser = document.getElementById('newUsername').value.trim();
