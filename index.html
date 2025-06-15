@@ -125,8 +125,7 @@
     const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
     let currentUser = null, characters = [], chatrooms = [], messages = [], selectedCharacter = null, selectedRoom = null;
     // Load last viewed timestamps from localStorage or initialize empty
-    let lastViewedTimestamps = JSON.parse(localStorage.getItem('rpchat_lastViewed')) || {}; 
-    let lastViewedTimestamps = {};
+    let lastViewedTimestamps = JSON.parse(localStorage.getItem('rpchat_lastViewed')) || {};
     
 
     async function submitAuth() {
