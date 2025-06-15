@@ -35,6 +35,18 @@
     #messageInput { flex-grow: 1; padding: 8px; border-radius: 4px; border: none; }
     #sendBtn { margin-left: 10px; }
     #lockedMsg { padding: 10px; background: #800; color: #faa; display: none; }
+    .chat-message.right {
+      flex-direction: row-reverse;
+    }
+    
+    .chat-message.right .chat-bubble {
+      background: #0ff; /* different color for your messages */
+      color: #000;
+    }
+    
+    .chat-message.right .chat-avatar {
+      border-color: #0ff;
+    }
   </style>
 </head>
 <body>
@@ -188,6 +200,11 @@
       messages.filter(m => m.room === selectedRoom).forEach(m => {
         const msgWrap = document.createElement('div');
         msgWrap.className = 'chat-message';
+
+        // Align right if this message is from your selected character
+        if (selectedCharacter && m.charname === selectedCharacter.name) {
+          msgWrap.classList.add('right');
+        }
 
         const avatar = document.createElement('img');
         avatar.src = m.pfp || '';
