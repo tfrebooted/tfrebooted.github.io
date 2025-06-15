@@ -222,14 +222,14 @@
       if (!newUser || !newPass) return alert('Fill out both fields.');
     
       try {
-        const usersRes = await fetch('https://sheets.livepolls.app/api/spreadsheets/2815826f-94c2-4010-a5d4-3bebbe92144f/Users');
+        const usersRes = await fetch(`${API_BASE}/Users`);
         const usersJson = await usersRes.json();
         const existing = usersJson.data.find(u => u.Username.toLowerCase() === newUser.toLowerCase());
         if (existing) return alert('Username already exists.');
     
         const newEntry = { Username: newUser, Password: newPass };
     
-        const putRes = await fetch('https://sheets.livepolls.app/api/spreadsheets/2815826f-94c2-4010-a5d4-3bebbe92144f/Users', {
+        const putRes = await fetch(`${API_BASE}/Users`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newEntry)
