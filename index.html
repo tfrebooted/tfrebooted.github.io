@@ -51,12 +51,15 @@
       </p>
     </div>
   </div>
-  <div id="signupBox" style="display:none; margin-top:20px;">
-      <h3>Sign Up</h3>
-      <input id="newUsername" placeholder="New Username" />
-      <input id="newPassword" type="password" placeholder="New Password" />
-      <button onclick="submitSignup()">Create Account</button>
-    </div>
+  <div id="signupBox" class="login-box" style="display:none;">
+    <h2>Sign Up</h2>
+    <input id="newUsername" placeholder="New Username" autocomplete="off" />
+    <input id="newPassword" type="password" placeholder="New Password" autocomplete="off" />
+    <button onclick="submitSignup()">Create Account</button>
+    <p style="margin-top:10px; font-size: 0.9em;">
+      <span onclick="hideSignup()" style="color:#0ff; cursor:pointer;">Back to Login</span>
+    </p>
+  </div>
 
   <!-- Chat View -->
   <div id="chat">
@@ -215,6 +218,11 @@
     function showSignup() {
       document.getElementById('signupBox').style.display = 'block';
     }
+
+    function hideSignup() {
+      document.getElementById('signupBox').style.display = 'none';
+    }
+
     
     async function submitSignup() {
       const newUser = document.getElementById('newUsername').value.trim();
