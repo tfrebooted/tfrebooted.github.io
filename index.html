@@ -190,12 +190,20 @@
       const chatDiv = document.getElementById('chatroom');
       const msgInput = document.getElementById('messageInput');
       const sendBtn = document.getElementById('sendBtn');
+      
+      const chatroomDiv = document.getElementById("chatroom");
+
+      if (!selectedRoom || !locationRoomMap[selectedRoom]) {
+        console.warn("No room selected or room missing.");
+        return;
+      }
 
       if (!selectedRoom) {
         roomHeader.textContent = 'Select a room';
         chatDiv.innerHTML = '';
         msgInput.disabled = true;
         sendBtn.disabled = true;
+        chatroomDiv.innerHTML = "";
         return;
       }
 
