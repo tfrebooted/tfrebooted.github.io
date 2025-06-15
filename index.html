@@ -16,7 +16,20 @@
     .chat-container { display: flex; height: 90vh; }
     .sidebar { width: 220px; background: #222; padding: 10px; overflow-y: auto; }
     .sidebar h3 { margin-top: 0; }
-    .sidebar button { width: 100%; margin: 4px 0; padding: 8px; background: #444; color: #eee; border: none; cursor: pointer; border-radius: 4px; }
+    .sidebar button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 8px;
+      background: #444;
+      color: #eee;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
     .sidebar button:hover { background: #0ff; color: #000; }
     .sidebar .active-room { background: #0ff; color: #000 !important; font-weight: bold; }
     .sidebar .active-char {
@@ -159,7 +172,10 @@
 
       userChars.forEach(char => {
         const btn = document.createElement('button');
-        btn.textContent = char.character;
+        btn.innerHTML = `
+          <img src="${char["pfp link"] || ''}" alt="${char.character}" style="width:24px; height:24px; border-radius:50%; object-fit:cover; margin-right:8px; vertical-align:middle;">
+          <span>${char.character}</span>
+        `;
         btn.classList.toggle('active-char', selectedCharacter?.name === char.character);
         btn.onclick = () => {
           selectedCharacter = {
