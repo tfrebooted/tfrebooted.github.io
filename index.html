@@ -65,6 +65,10 @@
   <div id="chat">
     <div class="chat-container">
       <div class="sidebar">
+        <div style="margin-bottom: 10px; padding: 5px; background: #111; border-bottom: 1px solid #0ff;">
+          <div id="userInfo" style="font-size: 0.9em; color: #0ff; margin-bottom: 5px;"></div>
+          <button onclick="signOut()" style="background:#800; color:#fff;">Sign Out</button>
+        </div>
         <h3>Characters</h3>
         <div id="charList"></div>
         <h3>Locations</h3>
@@ -99,6 +103,7 @@
         const found = json.data.find(u => u.Username.toLowerCase() === user.toLowerCase());
         if (!found || found.Password !== pass) return alert('Invalid username or password');
         currentUser = found.Username;
+        localStorage.setItem('rpchat_user', currentUser); // NEW
         await loadApp();
       } catch (err) {
         alert('Login error'); console.error(err);
@@ -106,6 +111,7 @@
     }
 
     async function loadApp() {
+      document.getElementById('userInfo').textContent = `Logged in as: ${currentUser}`;
       document.getElementById('login').classList.remove('active');
       document.getElementById('chat').classList.add('active');
       await fetchData();
@@ -223,6 +229,11 @@
       document.getElementById('signupBox').style.display = 'none';
     }
 
+    function signOut() {
+      localStorage.removeItem('rpchat_user');
+      location.reload(); // reset app to login state
+    }
+
     
     async function submitSignup() {
       const newUser = document.getElementById('newUsername').value.trim();
@@ -315,6 +326,14 @@
         sendMessage();
       }
     });
+
+    // Auto-login if stored
+    const savedUser = localStorage.getItem('rpchat_user');
+    if (savedUser) {
+      currentUser = savedUser;
+      loadApp();
+    }
+
 
   </script>
 </body>
