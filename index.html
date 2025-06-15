@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat App</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #login, #chat { display: none; height: 100vh; }
+    #login.active, #chat.active { display: flex; justify-content: center; align-items: center; }
+    .sidebar { width: 250px; background: #f2f2f2; padding: 10px; }
+    .main { flex: 1; display: flex; flex-direction: column; }
+    .chatroom { flex: 1; overflow-y: auto; padding: 10px; border-top: 1px solid #ccc; }
+    .sendbar { display: flex; padding: 10px; border-top: 1px solid #ccc; }
+    .sendbar input { flex: 1; padding: 8px; }
+    .sendbar button { padding: 8px; }
+    .chat-user { font-weight: bold; cursor: pointer; }
+    .character-locked { color: red; text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="login" class="active">
+    <div>
+      <h2 id="formTitle">Login</h2>
+      <input id="username" placeholder="Username" /><br />
+      <input id="password" placeholder="Password" type="password" /><br />
+      <button onclick="submitAuth()">Submit</button>
+      <p onclick="toggleAuth()">Don't have an account? Sign up</p>
+    </div>
+  </div>
+
+  <div id="chat">
+    <div style="display: flex; width: 100%;">
+      <div class="sidebar">
+        <h3>Characters</h3>
+        <div id="charList"></div>
+        <h3>Locations</h3>
+        <div id="locList"></div>
+      </div>
+      <div class="main">
+        <div id="roomHeader">Select a room</div>
+        <div class="chatroom" id="chatroom"></div>
+        <div class="sendbar">
+          <input id="messageInput" placeholder="Type message..." disabled />
+          <button onclick="sendMessage()" disabled id="sendBtn">Send</button>
+        </div>
+        <div class="character-locked" id="lockedMsg" style="display:none">
+          Request @definitely.kevin in Discord for a character!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isSignup = false;
+    let currentUser = null;
+    let characters = [];
+    let chatrooms = [];
+    let messages = [];
+    let selectedCharacter = null;
+    let selectedRoom = null;
+
+    const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
+
+    function toggleAuth() {
+      isSignup = !isSignup;
+      document.getElementById('formTitle').innerText = isSignup ? 'Sign Up' : 'Login';
+    }
+
+    async function submitAuth() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const res = await fetch(`${API_BASE}/Users`, { headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+
+      const found = data.find(u => u.username === user);
+      if (isSignup) {
+        if (found) return alert('Username already exists');
+        await fetch(`${API_BASE}/Users`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify([{ username: user, password: pass }])
+        });
+        alert('Signed up! Now login.');
+        toggleAuth();
+      } else {
+        if (!found || found.password !== pass) return alert('Invalid login');
+        currentUser = user;
+        loadApp();
+      }
+    }
+
+    async function loadApp() {
+      document.getElementById('login').classList.remove('active');
+      document.getElementById('chat').classList.add('active');
+      await fetchData();
+      renderSidebar();
+    }
+
+    async function fetchData() {
+      const charRes = await fetch(`${API_BASE}/Characters`);
+      characters = await charRes.json();
+
+      const locRes = await fetch(`${API_BASE}/Chatrooms`);
+      chatrooms = await locRes.json();
+
+      const msgRes = await fetch(`${API_BASE}/Messages`);
+      messages = await msgRes.json();
+    }
+
+    function renderSidebar() {
+      const charDiv = document.getElementById('charList');
+      charDiv.innerHTML = '';
+      const userChars = characters.filter(c => c.username === currentUser);
+      if (userChars.length === 0) {
+        document.getElementById('lockedMsg').style.display = 'block';
+      } else {
+        document.getElementById('lockedMsg').style.display = 'none';
+        userChars.forEach(char => {
+          const btn = document.createElement('button');
+          btn.textContent = char.name;
+          btn.onclick = () => selectedCharacter = char;
+          charDiv.appendChild(btn);
+        });
+      }
+
+      const locDiv = document.getElementById('locList');
+      locDiv.innerHTML = '';
+      chatrooms.forEach(loc => {
+        const btn = document.createElement('button');
+        btn.textContent = `${loc.section} > ${loc.subsection}`;
+        btn.onclick = () => {
+          selectedRoom = `${loc.section}-${loc.subsection}`;
+          renderChatroom();
+        };
+        locDiv.appendChild(btn);
+      });
+    }
+
+    function renderChatroom() {
+      document.getElementById('roomHeader').textContent = selectedRoom;
+      const chatDiv = document.getElementById('chatroom');
+      chatDiv.innerHTML = '';
+      const relevant = messages.filter(m => m.room === selectedRoom);
+      relevant.forEach(m => {
+        const msg = document.createElement('div');
+        msg.innerHTML = `<span class='chat-user' onclick='showUser("${m.username}")'>${m.charname}</span>: ${m.text}`;
+        chatDiv.appendChild(msg);
+      });
+      const enabled = !!selectedCharacter;
+      document.getElementById('messageInput').disabled = !enabled;
+      document.getElementById('sendBtn').disabled = !enabled;
+    }
+
+    function showUser(username) {
+      alert('User: ' + username);
+    }
+
+    async function sendMessage() {
+      const msg = document.getElementById('messageInput').value;
+      if (!msg || !selectedCharacter || !selectedRoom) return;
+      const payload = [{
+        room: selectedRoom,
+        charname: selectedCharacter.name,
+        pfp: selectedCharacter.pfp,
+        text: msg,
+        username: currentUser
+      }];
+      await fetch(`${API_BASE}/Messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      messages.push(payload[0]);
+      document.getElementById('messageInput').value = '';
+      renderChatroom();
+    }
+  </script>
+</body>
+</html>
