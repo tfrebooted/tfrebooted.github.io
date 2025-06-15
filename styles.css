@@ -1,0 +1,141 @@
+/* styles.css */
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(145deg, #0f0f0f, #1b1b1b);
+  color: #f0f0f0;
+}
+
+#login.active, #chat.active {
+  display: block;
+}
+#login, #chat {
+  display: none;
+}
+
+.login-box {
+  width: 300px;
+  margin: 100px auto;
+  padding: 30px;
+  background: #202020;
+  border: 2px solid #ff0000;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.login-box input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  background: #111;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+.login-box button {
+  background: #ff0000;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.chat-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background: #151515;
+  padding: 20px;
+  border-right: 2px solid #ff0000;
+  overflow-y: auto;
+}
+
+.sidebar h3 {
+  margin-bottom: 10px;
+  color: #ff0000;
+}
+
+.sidebar button {
+  display: block;
+  width: 100%;
+  background: #252525;
+  color: #f0f0f0;
+  border: none;
+  padding: 10px;
+  margin-bottom: 8px;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.sidebar button:hover {
+  background: #ff0000;
+}
+
+.main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  padding: 20px;
+}
+
+#roomHeader {
+  font-size: 1.5em;
+  color: #00bfff;
+  margin-bottom: 10px;
+}
+
+.chatroom {
+  flex-grow: 1;
+  overflow-y: auto;
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #333;
+}
+
+.chatroom div {
+  margin-bottom: 8px;
+}
+
+.chat-user {
+  color: #ffcc00;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.sendbar {
+  display: flex;
+  gap: 10px;
+}
+
+.sendbar input {
+  flex-grow: 1;
+  padding: 10px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 6px;
+}
+
+.sendbar button {
+  background: #ff0000;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.character-locked {
+  color: #ff5555;
+  font-weight: bold;
+  margin-top: 10px;
+}
