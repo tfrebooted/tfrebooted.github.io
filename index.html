@@ -47,9 +47,14 @@
       <input id="password" type="password" placeholder="Password" autocomplete="off" />
       <button onclick="submitAuth()">Enter</button>
       <p style="margin-top:10px; font-size: 0.9em;">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfxD-aSS9bBj2GzrhaZ3FoZhDKcr6B1gz6M5CMVYyA14MeRxA/viewform?usp=dialog" target="_blank" style="color:#0ff">Request Account</a>
+        <span onclick="showSignup()" style="color:#0ff; cursor:pointer;">Sign Up</span>
       </p>
-      <p style="margin-top:10px; font-size: 0.9em; cursor:pointer; color:#0ff" onclick="adminBypass()">Admin Debug Mode</p>
+    </div>
+    <div id="signupBox" style="display:none; margin-top:20px;">
+      <h3>Sign Up</h3>
+      <input id="newUsername" placeholder="New Username" />
+      <input id="newPassword" type="password" placeholder="New Password" />
+      <button onclick="submitSignup()">Create Account</button>
     </div>
   </div>
 
@@ -95,11 +100,6 @@
       } catch (err) {
         alert('Login error'); console.error(err);
       }
-    }
-
-    function adminBypass() {
-      currentUser = 'Admin';
-      loadApp();
     }
 
     async function loadApp() {
@@ -210,6 +210,38 @@
       chatDiv.scrollTo({ top: chatDiv.scrollHeight, behavior: 'smooth' });
 
 
+    }
+
+    function showSignup() {
+      document.getElementById('signupBox').style.display = 'block';
+    }
+    
+    async function submitSignup() {
+      const newUser = document.getElementById('newUsername').value.trim();
+      const newPass = document.getElementById('newPassword').value.trim();
+      if (!newUser || !newPass) return alert('Fill out both fields.');
+    
+      try {
+        const usersRes = await fetch('https://sheets.livepolls.app/api/spreadsheets/2815826f-94c2-4010-a5d4-3bebbe92144f/Users');
+        const usersJson = await usersRes.json();
+        const existing = usersJson.data.find(u => u.Username.toLowerCase() === newUser.toLowerCase());
+        if (existing) return alert('Username already exists.');
+    
+        const newEntry = { Username: newUser, Password: newPass };
+    
+        const putRes = await fetch('https://sheets.livepolls.app/api/spreadsheets/2815826f-94c2-4010-a5d4-3bebbe92144f/Users', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newEntry)
+        });
+    
+        if (!putRes.ok) throw new Error('Failed to create account');
+        alert('Account created! You can now log in.');
+        document.getElementById('signupBox').style.display = 'none';
+      } catch (err) {
+        console.error(err);
+        alert('Signup error');
+      }
     }
 
     function escapeHtml(text) {
