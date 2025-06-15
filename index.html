@@ -146,22 +146,24 @@
         const roomId = `${loc.section}-${loc.subsection}`;
         btn.textContent = `${loc.section} > ${loc.subsection}`;
         btn.classList.toggle('active-room', selectedRoom === roomId);
+      
+        const roomMessages = messages.filter(m => m.room === roomId);
+        const lastSeen = lastViewedTimestamps[roomId] || new Date(0);
+        const hasNewMessage = roomMessages.some(m => {
+          return new Date(m.timestamp) > new Date(lastSeen);
+        });
+      
         if (hasNewMessage && selectedRoom !== roomId) {
           btn.style.background = '#f90'; // orange highlight for new messages
         }
-
+      
         btn.onclick = () => {
           selectedRoom = roomId;
           lastViewedTimestamps[roomId] = new Date(); // mark as seen
-          const roomMessages = messages.filter(m => m.room === roomId);
-          const lastSeen = lastViewedTimestamps[roomId];
-          const hasNewMessage = roomMessages.some(m => {
-            return new Date(m.timestamp) > new Date(lastSeen);
-          });
-
           renderChatroom();
           renderSidebar(); // update highlight
         };
+      
         locDiv.appendChild(btn);
       });
     }
