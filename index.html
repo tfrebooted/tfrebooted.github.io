@@ -102,8 +102,10 @@
         </div>
         <h3>Characters</h3>
         <a href="characters.html" class="charlink-button" target="_blank">View All Characters</a>
+        <input id="charSearch" placeholder="Search characters..." style="width: 100%; margin-bottom: 8px; padding: 6px; border-radius: 4px; border: none;" />
         <div id="charList"></div>
         <h3>Locations</h3>
+        <input id="locSearch" placeholder="Search locations..." style="width: 100%; margin-bottom: 8px; padding: 6px; border-radius: 4px; border: none;" />
         <div id="locList"></div>
       </div>
       <div class="main">
@@ -178,8 +180,14 @@
       const locDiv = document.getElementById('locList');
       charDiv.innerHTML = locDiv.innerHTML = '';
     
-      // Filter characters owned by current user
-      const userChars = characters.filter(c => c.username.toLowerCase() === currentUser.toLowerCase());
+      const charFilter = document.getElementById('charSearch').value.toLowerCase();
+      const locFilter = document.getElementById('locSearch').value.toLowerCase();
+    
+      // Filter characters owned by current user and matching filter text
+      const userChars = characters
+        .filter(c => c.username.toLowerCase() === currentUser.toLowerCase())
+        .filter(c => c.character.toLowerCase().includes(charFilter));
+    
       document.getElementById('lockedMsg').style.display = userChars.length ? 'none' : 'block';
     
       // Render character buttons
@@ -202,8 +210,13 @@
         charDiv.appendChild(btn);
       });
     
-      // Sort chatrooms so rooms with unread messages come first
-      const sortedChatrooms = [...chatrooms].sort((a, b) => {
+      // Filter chatrooms based on location filter
+      const filteredChatrooms = chatrooms.filter(loc =>
+        (`${loc.section} > ${loc.subsection}`).toLowerCase().includes(locFilter)
+      );
+    
+      // Sort filtered chatrooms so rooms with unread messages come first
+      const sortedChatrooms = [...filteredChatrooms].sort((a, b) => {
         const idA = `${a.section}-${a.subsection}`;
         const idB = `${b.section}-${b.subsection}`;
     
@@ -216,7 +229,6 @@
         if (hasUnreadA && !hasUnreadB) return -1; // A before B
         if (!hasUnreadA && hasUnreadB) return 1;  // B before A
     
-        // Otherwise sort alphabetically by id
         return idA.localeCompare(idB);
       });
     
@@ -230,19 +242,18 @@
         const lastSeen = lastViewedTimestamps[roomId] ? new Date(lastViewedTimestamps[roomId]) : new Date(0);
         const hasNewMessage = messages.some(m => m.room === roomId && new Date(m.timestamp) > lastSeen);
     
-        // Highlight unread rooms in yellow if not currently selected
         if (hasNewMessage && selectedRoom !== roomId) {
           btn.style.background = '#f90'; // orange/yellow
           btn.style.color = '#000';
         } else {
-          btn.style.background = ''; // reset
+          btn.style.background = '';
           btn.style.color = '';
         }
     
         btn.onclick = async () => {
           selectedRoom = roomId;
-          lastViewedTimestamps[roomId] = new Date().toISOString(); // update last seen
-          saveLastViewed(); // persist
+          lastViewedTimestamps[roomId] = new Date().toISOString();
+          saveLastViewed();
           await fetchMessagesAndUpdate();
           renderSidebar();
           renderChatroom();
@@ -251,6 +262,14 @@
         locDiv.appendChild(btn);
       });
     }
+
+    document.getElementById('charSearch').addEventListener('input', function() {
+      renderSidebar();
+    });
+    
+    document.getElementById('locSearch').addEventListener('input', function() {
+      renderSidebar();
+    });
 
     function renderChatroom() {
       const roomHeader = document.getElementById('roomHeader');
