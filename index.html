@@ -51,12 +51,18 @@
       </p>
     </div>
   </div>
-  <div id="signupBox" style="display:none; margin-top:20px;">
-      <h3>Sign Up</h3>
+  <div id="signup" class="">
+    <div class="login-box">
+      <h2>Sign Up</h2>
       <input id="newUsername" placeholder="New Username" />
       <input id="newPassword" type="password" placeholder="New Password" />
       <button onclick="submitSignup()">Create Account</button>
+      <p style="margin-top:10px; font-size: 0.9em;">
+        <span onclick="showLogin()" style="color:#0ff; cursor:pointer;">Back to Login</span>
+      </p>
     </div>
+  </div>
+
 
   <!-- Chat View -->
   <div id="chat">
@@ -213,8 +219,15 @@
     }
 
     function showSignup() {
-      document.getElementById('signupBox').style.display = 'block';
+      document.getElementById('login').classList.remove('active');
+      document.getElementById('signup').classList.add('active');
     }
+    
+    function showLogin() {
+      document.getElementById('signup').classList.remove('active');
+      document.getElementById('login').classList.add('active');
+    }
+
     
     async function submitSignup() {
       const newUser = document.getElementById('newUsername').value.trim();
