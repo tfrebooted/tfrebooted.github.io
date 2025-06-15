@@ -35,6 +35,20 @@
     #messageInput { flex-grow: 1; padding: 8px; border-radius: 4px; border: none; }
     #sendBtn { margin-left: 10px; }
     #lockedMsg { padding: 10px; background: #800; color: #faa; display: none; }
+    a.charlink-button {
+      display: block;
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    a.charlink-button:hover {
+      background: #0cc;
+    }
   </style>
 </head>
 <body>
@@ -70,7 +84,7 @@
           <button onclick="signOut()" style="background:#800; color:#fff;">Sign Out</button>
         </div>
         <h3>Characters</h3>
-        <a href="characters.html" style="color:#0ff; display:block; margin:10px 0; text-align:center;">View All Characters</a>
+        <a href="characters.html" class="charlink-button">📖 View All Characters</a>
         <div id="charList"></div>
         <h3>Locations</h3>
         <div id="locList"></div>
