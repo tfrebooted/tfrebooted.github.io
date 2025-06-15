@@ -51,17 +51,45 @@
     const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
 
     async function submitAuth() {
-      const user = document.getElementById('username').value;
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+    
+      if (!user || !pass) {
+        alert('Please enter username and password');
+        return;
+      }
+    
       try {
-        const res = await fetch(`${API_BASE}/Users`, { headers: { 'Content-Type': 'application/json' } });
-        const data = await res.json();
-        const users = Array.isArray(data.rows) ? data.rows : [];
-        const found = users.find(u => u.username === user);
-        if (!found) return alert('User not found. Use the Request Account link to sign up.');
-        currentUser = user;
-        loadApp();
+        const res = await fetch(`${API_BASE}/Users`);
+        const json = await res.json();
+    
+        if (!json.success) {
+          alert('Failed to load user data');
+          return;
+        }
+    
+        const users = json.data;  // <-- use json.data here
+    
+        const found = users.find(u => u.Username.toLowerCase() === user.toLowerCase());
+    
+        if (isSignup) {
+          if (found) {
+            alert('Username already exists');
+            return;
+          }
+          alert('Signups must use the Google Form.');
+          window.open('https://docs.google.com/forms/d/e/1FAIpQLSfxD-aSS9bBj2GzrhaZ3FoZhDKcr6B1gz6M5CMVYyA14MeRxA/viewform?usp=dialog', '_blank');
+          return;
+        } else {
+          if (!found || found.Password !== pass) {
+            alert('Invalid login');
+            return;
+          }
+          currentUser = found.Username;
+          loadApp();
+        }
       } catch (e) {
-        alert('Error retrieving users.');
+        alert('Login error, please try again.');
         console.error(e);
       }
     }
