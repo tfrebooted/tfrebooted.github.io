@@ -144,9 +144,16 @@
         const btn = document.createElement('button');
         btn.textContent = char.character;
         btn.classList.toggle('active-char', selectedCharacter?.name === char.character);
-        btn.onclick = () => selectedCharacter = {
-          name: char.character, pfp: char["pfp link"], username: char.username
+        btn.onclick = () => {
+          selectedCharacter = {
+            name: char.character,
+            pfp: char["pfp link"],
+            username: char.username
+          };
+          renderSidebar();
+          renderChatroom();
         };
+
         charDiv.appendChild(btn);
       });
 
@@ -194,22 +201,24 @@
       roomHeader.textContent = selectedRoom;
       chatDiv.innerHTML = '';
 
-      messages.filter(m => m.room === selectedRoom).forEach(m => {
-        const msgWrap = document.createElement('div');
-        msgWrap.className = 'chat-message';
-
-        const avatar = document.createElement('img');
-        avatar.src = m.pfp || '';
-        avatar.className = 'chat-avatar';
-        avatar.alt = m.charname;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'chat-bubble';
-        bubble.innerHTML = `<span class="chat-user" onclick="showUser('${m.username}')">${m.charname}</span>${escapeHtml(m.text)}`;
-
-        msgWrap.appendChild(avatar);
-        msgWrap.appendChild(bubble);
-        chatDiv.appendChild(msgWrap);
+      messages.filter(m => m.room === selectedRoom)
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+        .forEach(m => {
+          const msgWrap = document.createElement('div');
+          msgWrap.className = 'chat-message';
+  
+          const avatar = document.createElement('img');
+          avatar.src = m.pfp || '';
+          avatar.className = 'chat-avatar';
+          avatar.alt = m.charname;
+  
+          const bubble = document.createElement('div');
+          bubble.className = 'chat-bubble';
+          bubble.innerHTML = `<span class="chat-user" onclick="showUser('${m.username}')">${m.charname}</span>${escapeHtml(m.text)}`;
+  
+          msgWrap.appendChild(avatar);
+          msgWrap.appendChild(bubble);
+          chatDiv.appendChild(msgWrap);
       });
 
       const enabled = !!selectedCharacter;
