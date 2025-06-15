@@ -173,11 +173,12 @@
           btn.style.background = '#f90'; // orange highlight for new messages
         }
       
-        btn.onclick = () => {
+        btn.onclick = async () => {
           selectedRoom = roomId;
           lastViewedTimestamps[roomId] = new Date(); // mark as seen
-          renderChatroom();
-          renderSidebar(); // update highlight
+          await fetchMessagesAndUpdate();            // fetch immediately
+          renderSidebar();                           // update sidebar highlights
+          renderChatroom();                          // render chatroom with fresh messages
         };
       
         locDiv.appendChild(btn);
@@ -327,6 +328,10 @@
       }
     }
 
+    // Fetch messages immediately when the page loads (if room selected)
+    if (selectedRoom) fetchMessagesAndUpdate();
+    
+    // Then poll every second
     setInterval(fetchMessagesAndUpdate, 1000);
 
     document.getElementById('messageInput').addEventListener('keydown', function(event) {
