@@ -139,25 +139,17 @@
 
     // FETCH CHARACTERS, CHATROOMS, MESSAGES FROM API
     async function fetchData() {
-      try {
-        const [charRes, roomRes, msgRes] = await Promise.all([
-          fetch(`${API_BASE}/Characters`),
-          fetch(`${API_BASE}/Chatrooms`),
-          fetch(`${API_BASE}/Messages`)
-        ]);
-
-        const charJson = await charRes.json();
-        const roomJson = await roomRes.json();
-        const msgJson = await msgRes.json();
-
-        characters = charJson.rows || [];
-        chatrooms = roomJson.rows || [];
-        messages = msgJson.rows || [];
-
-      } catch (err) {
-        alert('Error loading chat data.');
-        console.error(err);
-      }
+      const charRes = await fetch(`${API_BASE}/Characters`);
+      const charJson = await charRes.json();
+      characters = charJson.data || []; // ✅ FIXED
+    
+      const locRes = await fetch(`${API_BASE}/Chatrooms`);
+      const locJson = await locRes.json();
+      chatrooms = locJson.data || [];   // ✅ FIXED
+    
+      const msgRes = await fetch(`${API_BASE}/Messages`);
+      const msgJson = await msgRes.json();
+      messages = msgJson.data || [];    // ✅ FIXED
     }
 
     // RENDER CHARACTERS AND CHATROOMS IN SIDEBAR
