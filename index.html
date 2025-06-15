@@ -183,6 +183,7 @@
       sendBtn.disabled = !enabled;
       if (enabled) msgInput.focus();
       chatDiv.scrollTop = chatDiv.scrollHeight;
+
     }
 
     function escapeHtml(text) {
@@ -201,9 +202,10 @@
       const payload = [{
         room: selectedRoom,
         charname: selectedCharacter.name,
-        pfp: selectedCharacter.pfp || '',
-        text,
-        username: currentUser
+        pfp: selectedCharacter.pfp,
+        text: msg,
+        username: currentUser,
+        timestamp: new Date().toISOString()
       }];
 
       try {
