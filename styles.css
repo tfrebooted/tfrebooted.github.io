@@ -1,160 +1,151 @@
-/* styles.css for Cyberion RP Chat */
-
 body {
   margin: 0;
-  padding: 0;
   font-family: 'Orbitron', sans-serif;
-  background: linear-gradient(to right, #0f0f0f, #1c1c1c);
-  color: #eee;
+  background-color: #0a0a0a;
+  color: #00ffff;
 }
 
-#login.active, #chat {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+.active {
+  display: block;
+}
+
+#login, #chat {
+  display: none;
 }
 
 .login-box {
+  max-width: 300px;
+  margin: 10% auto;
   background: #111;
-  padding: 40px;
-  border: 2px solid #0ff;
+  padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 12px #0ff;
+  box-shadow: 0 0 15px #00ffff88;
   text-align: center;
 }
 
-.login-box h2 {
-  margin-bottom: 20px;
-  color: #0ff;
-  text-shadow: 0 0 8px #0ff;
-}
-
 .login-box input {
-  width: 200px;
-  padding: 10px;
-  margin: 10px 0;
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 8px;
   background: #222;
-  border: 1px solid #0ff;
   color: #0ff;
-  border-radius: 5px;
 }
 
 .login-box button {
-  background: #0ff;
-  color: #000;
-  padding: 10px 20px;
+  background: #00ffff;
   border: none;
-  border-radius: 5px;
+  color: black;
   font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-box button:hover {
+  background: #00bbbb;
 }
 
 .chat-container {
   display: flex;
-  width: 90%;
-  height: 90vh;
-  border: 2px solid #0ff;
-  box-shadow: 0 0 20px #0ff inset;
-  border-radius: 10px;
-  overflow: hidden;
+  height: 100vh;
 }
 
 .sidebar {
   width: 250px;
-  background: #141414;
-  padding: 15px;
+  background-color: #111;
+  padding: 1rem;
+  border-right: 2px solid #00ffff44;
   overflow-y: auto;
-  border-right: 2px solid #0ff;
 }
 
 .sidebar h3 {
-  color: #0ff;
-  margin-top: 20px;
-  text-shadow: 0 0 5px #0ff;
+  margin-top: 0;
+  border-bottom: 1px solid #0ff;
+  padding-bottom: 0.3rem;
 }
 
 .sidebar button {
   width: 100%;
-  background: #0ff;
-  color: #000;
+  margin: 0.3rem 0;
+  background: #222;
+  color: #0ff;
   border: none;
-  padding: 10px;
-  margin: 5px 0;
+  padding: 0.4rem;
   border-radius: 6px;
-  font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
+  text-align: left;
 }
 
 .sidebar button:hover {
-  background: #00cccc;
+  background: #333;
 }
 
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  background: #1c1c1c;
-  position: relative;
+  padding: 1rem;
 }
 
 #roomHeader {
-  font-size: 1.5em;
-  color: #0ff;
-  margin-bottom: 10px;
-  text-shadow: 0 0 6px #0ff;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #0ff;
+  padding-bottom: 0.3rem;
 }
 
 .chatroom {
   flex: 1;
-  background: #121212;
-  border: 1px solid #333;
-  padding: 10px;
   overflow-y: auto;
-  margin-bottom: 10px;
+  background: #000;
+  border: 1px solid #0ff3;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .chatroom div {
-  margin: 6px 0;
+  margin-bottom: 0.5rem;
 }
 
 .chat-user {
   font-weight: bold;
-  color: #0ff;
+  color: #00ffff;
   cursor: pointer;
-  text-shadow: 0 0 5px #0ff;
 }
 
 .sendbar {
   display: flex;
-  gap: 10px;
+  gap: 0.5rem;
 }
 
 .sendbar input {
   flex: 1;
-  padding: 10px;
-  background: #222;
-  border: 1px solid #0ff;
+  padding: 0.5rem;
+  background: #111;
+  border: 1px solid #0ff2;
+  border-radius: 8px;
   color: #0ff;
-  border-radius: 5px;
 }
 
 .sendbar button {
-  padding: 10px 20px;
+  padding: 0.5rem 1rem;
   background: #0ff;
-  color: #000;
   border: none;
-  border-radius: 5px;
-  font-weight: bold;
+  border-radius: 8px;
+  color: #000;
   cursor: pointer;
 }
 
+.sendbar button:hover {
+  background: #0cc;
+}
+
 .character-locked {
-  color: #f33;
-  text-align: center;
-  font-weight: bold;
-  margin-top: 10px;
-  text-shadow: 0 0 3px red;
+  font-size: 0.9rem;
+  color: #f55;
+  margin-top: 0.5rem;
 }
