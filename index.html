@@ -229,17 +229,21 @@
     
         const newEntry = { Username: newUser, Password: newPass };
     
-        const putRes = await fetch(`${API_BASE}/Users`, {
-          method: 'PUT',
+        const postRes = await fetch(`${API_BASE}/Users`, {
+          method: 'POST', // CHANGED from PUT to POST
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newEntry)
         });
     
-        if (!putRes.ok) throw new Error('Failed to create account');
+        const result = await postRes.json();
+        console.log('Signup result:', result);
+    
+        if (!postRes.ok) throw new Error('Failed to create account');
+    
         alert('Account created! You can now log in.');
         document.getElementById('signupBox').style.display = 'none';
       } catch (err) {
-        console.error(err);
+        console.error('Signup error:', err);
         alert('Signup error');
       }
     }
