@@ -174,10 +174,11 @@
         document.getElementById('lockedMsg').style.display = 'none';
         userChars.forEach(char => {
           const btn = document.createElement('button');
-          btn.textContent = char.name;
-          btn.onclick = () => {
-            selectedCharacter = char;
-            renderChatroom();
+          btn.textContent = char.character; // ← FIXED KEY
+          btn.onclick = () => selectedCharacter = {
+            name: char.character,
+            pfp: char["pfp link"],
+            username: char.username
           };
           charDiv.appendChild(btn);
         });
