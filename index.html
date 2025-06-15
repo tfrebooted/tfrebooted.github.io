@@ -35,27 +35,6 @@
     #messageInput { flex-grow: 1; padding: 8px; border-radius: 4px; border: none; }
     #sendBtn { margin-left: 10px; }
     #lockedMsg { padding: 10px; background: #800; color: #faa; display: none; }
-    .chat-message.right {
-      flex-direction: row-reverse;
-    }
-    
-    .chat-message.right .chat-bubble {
-      background: #0ff; /* different color for your messages */
-      color: #000;
-    }
-    
-    .chat-message.right .chat-avatar {
-      border-color: #0ff;
-    }
-
-    .chat-message.right .chat-user {
-      color: #0ff; /* default */
-      transition: color 0.3s ease;
-    }
-    
-    .chat-message.right.sending .chat-user {
-      color: #222 !important; /* temporary color when sending */
-    }
   </style>
 </head>
 <body>
@@ -206,31 +185,9 @@
       roomHeader.textContent = selectedRoom;
       chatDiv.innerHTML = '';
 
-      // Get last sent message to this room by the selected character (if any)
-      let lastSentMsgId = null;
-      for (let i = messages.length - 1; i >= 0; i--) {
-        const m = messages[i];
-        if (m.room === selectedRoom && selectedCharacter && m.charname === selectedCharacter.name) {
-          lastSentMsgId = i;
-          break;
-        }
-      }
-
       messages.filter(m => m.room === selectedRoom).forEach(m => {
         const msgWrap = document.createElement('div');
         msgWrap.className = 'chat-message';
-
-        // Align right if this message is from your selected character
-        if (selectedCharacter && m.charname === selectedCharacter.name) {
-          msgWrap.classList.add('right');
-          if (idx === lastSentMsgId) {
-            msgWrap.classList.add('sending');
-            // Remove the sending class after 1 second
-            setTimeout(() => {
-              msgWrap.classList.remove('sending');
-            }, 1000);
-          }
-        }
 
         const avatar = document.createElement('img');
         avatar.src = m.pfp || '';
