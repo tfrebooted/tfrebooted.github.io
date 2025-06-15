@@ -124,7 +124,10 @@
   <script>
     const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
     let currentUser = null, characters = [], chatrooms = [], messages = [], selectedCharacter = null, selectedRoom = null;
+    // Load last viewed timestamps from localStorage or initialize empty
+    let lastViewedTimestamps = JSON.parse(localStorage.getItem('rpchat_lastViewed')) || {}; 
     let lastViewedTimestamps = {};
+    
 
     async function submitAuth() {
       const user = document.getElementById('username').value.trim();
@@ -149,11 +152,16 @@
       document.getElementById('login').classList.remove('active');
       document.getElementById('chat').classList.add('active');
       await fetchData();
+      
+      // Initialize lastViewedTimestamps for new rooms if missing
       chatrooms.forEach(loc => {
         const roomId = `${loc.section}-${loc.subsection}`;
-        lastViewedTimestamps[roomId] = new Date(); // assume freshly loaded rooms are seen
+        if (!lastViewedTimestamps[roomId]) {
+          lastViewedTimestamps[roomId] = new Date(0).toISOString();
+        }
       });
-
+      saveLastViewed();
+      
       renderSidebar();
       selectedCharacter = null;
       selectedRoom = null;
@@ -170,10 +178,12 @@
       const charDiv = document.getElementById('charList');
       const locDiv = document.getElementById('locList');
       charDiv.innerHTML = locDiv.innerHTML = '';
-
+    
+      // Filter characters owned by current user
       const userChars = characters.filter(c => c.username.toLowerCase() === currentUser.toLowerCase());
       document.getElementById('lockedMsg').style.display = userChars.length ? 'none' : 'block';
-
+    
+      // Render character buttons
       userChars.forEach(char => {
         const btn = document.createElement('button');
         btn.innerHTML = `
@@ -190,34 +200,55 @@
           renderSidebar();
           renderChatroom();
         };
-
         charDiv.appendChild(btn);
       });
-
-      chatrooms.forEach(loc => {
-        const btn = document.createElement('button');
+    
+      // Sort chatrooms so rooms with unread messages come first
+      const sortedChatrooms = [...chatrooms].sort((a, b) => {
+        const idA = `${a.section}-${a.subsection}`;
+        const idB = `${b.section}-${b.subsection}`;
+    
+        const lastSeenA = lastViewedTimestamps[idA] ? new Date(lastViewedTimestamps[idA]) : new Date(0);
+        const lastSeenB = lastViewedTimestamps[idB] ? new Date(lastViewedTimestamps[idB]) : new Date(0);
+    
+        const hasUnreadA = messages.some(m => m.room === idA && new Date(m.timestamp) > lastSeenA);
+        const hasUnreadB = messages.some(m => m.room === idB && new Date(m.timestamp) > lastSeenB);
+    
+        if (hasUnreadA && !hasUnreadB) return -1; // A before B
+        if (!hasUnreadA && hasUnreadB) return 1;  // B before A
+    
+        // Otherwise sort alphabetically by id
+        return idA.localeCompare(idB);
+      });
+    
+      // Render chatroom buttons
+      sortedChatrooms.forEach(loc => {
         const roomId = `${loc.section}-${loc.subsection}`;
+        const btn = document.createElement('button');
         btn.textContent = `${loc.section} > ${loc.subsection}`;
         btn.classList.toggle('active-room', selectedRoom === roomId);
-      
-        const roomMessages = messages.filter(m => m.room === roomId);
-        const lastSeen = lastViewedTimestamps[roomId] || new Date(0);
-        const hasNewMessage = roomMessages.some(m => {
-          return new Date(m.timestamp) > new Date(lastSeen);
-        });
-      
+    
+        const lastSeen = lastViewedTimestamps[roomId] ? new Date(lastViewedTimestamps[roomId]) : new Date(0);
+        const hasNewMessage = messages.some(m => m.room === roomId && new Date(m.timestamp) > lastSeen);
+    
+        // Highlight unread rooms in yellow if not currently selected
         if (hasNewMessage && selectedRoom !== roomId) {
-          btn.style.background = '#f90'; // orange highlight for new messages
+          btn.style.background = '#f90'; // orange/yellow
+          btn.style.color = '#000';
+        } else {
+          btn.style.background = ''; // reset
+          btn.style.color = '';
         }
-      
+    
         btn.onclick = async () => {
           selectedRoom = roomId;
-          lastViewedTimestamps[roomId] = new Date(); // mark as seen
-          await fetchMessagesAndUpdate();            // fetch immediately
-          renderSidebar();                           // update sidebar highlights
-          renderChatroom();                          // render chatroom with fresh messages
+          lastViewedTimestamps[roomId] = new Date().toISOString(); // update last seen
+          saveLastViewed(); // persist
+          await fetchMessagesAndUpdate();
+          renderSidebar();
+          renderChatroom();
         };
-      
+    
         locDiv.appendChild(btn);
       });
     }
@@ -378,6 +409,10 @@
         sendMessage();
       }
     });
+
+    function saveLastViewed() {
+      localStorage.setItem('rpchat_lastViewed', JSON.stringify(lastViewedTimestamps));
+    }
 
     // Auto-login if stored
     const savedUser = localStorage.getItem('rpchat_user');
