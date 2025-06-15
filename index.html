@@ -19,6 +19,11 @@
     .sidebar button { width: 100%; margin: 4px 0; padding: 8px; background: #444; color: #eee; border: none; cursor: pointer; border-radius: 4px; }
     .sidebar button:hover { background: #0ff; color: #000; }
     .sidebar .active-room { background: #0ff; color: #000 !important; font-weight: bold; }
+    .sidebar .active-char {
+      background: #0ff;
+      color: #000 !important;
+      font-weight: bold;
+    }
     .main { flex-grow: 1; background: #111; display: flex; flex-direction: column; }
     #roomHeader { padding: 10px; background: #222; font-weight: bold; }
     #chatroom { flex-grow: 1; padding: 10px; overflow-y: auto; }
@@ -73,6 +78,7 @@
   <script>
     const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
     let currentUser = null, characters = [], chatrooms = [], messages = [], selectedCharacter = null, selectedRoom = null;
+    let lastViewedTimestamps = {};
 
     async function submitAuth() {
       const user = document.getElementById('username').value.trim();
@@ -100,6 +106,11 @@
       document.getElementById('login').classList.remove('active');
       document.getElementById('chat').classList.add('active');
       await fetchData();
+      chatrooms.forEach(loc => {
+        const roomId = `${loc.section}-${loc.subsection}`;
+        lastViewedTimestamps[roomId] = new Date(); // assume freshly loaded rooms are seen
+      });
+
       renderSidebar();
       selectedCharacter = null;
       selectedRoom = null;
@@ -123,6 +134,7 @@
       userChars.forEach(char => {
         const btn = document.createElement('button');
         btn.textContent = char.character;
+        btn.classList.toggle('active-char', selectedCharacter?.name === char.character);
         btn.onclick = () => selectedCharacter = {
           name: char.character, pfp: char["pfp link"], username: char.username
         };
@@ -134,8 +146,19 @@
         const roomId = ${loc.section}-${loc.subsection};
         btn.textContent = ${loc.section} > ${loc.subsection};
         btn.classList.toggle('active-room', selectedRoom === roomId);
+        if (hasNewMessage && selectedRoom !== roomId) {
+          btn.style.background = '#f90'; // orange highlight for new messages
+        }
+
         btn.onclick = () => {
           selectedRoom = roomId;
+          lastViewedTimestamps[roomId] = new Date(); // mark as seen
+          const roomMessages = messages.filter(m => m.room === roomId);
+          const lastSeen = lastViewedTimestamps[roomId];
+          const hasNewMessage = roomMessages.some(m => {
+            return new Date(m.timestamp) > new Date(lastSeen);
+          });
+
           renderChatroom();
           renderSidebar(); // update highlight
         };
@@ -182,7 +205,8 @@
       msgInput.disabled = !enabled;
       sendBtn.disabled = !enabled;
       if (enabled) msgInput.focus();
-      chatDiv.scrollTop = chatDiv.scrollHeight;
+      chatDiv.scrollTo({ top: chatDiv.scrollHeight, behavior: 'smooth' });
+
 
     }
 
@@ -203,7 +227,7 @@
         room: selectedRoom,
         charname: selectedCharacter.name,
         pfp: selectedCharacter.pfp,
-        text: msg,
+        text: text,
         username: currentUser,
         timestamp: new Date().toISOString()
       }];
@@ -224,6 +248,21 @@
         console.error(err);
       }
     }
+
+    async function fetchMessagesAndUpdate() {
+      if (!selectedRoom) return;
+      try {
+        const res = await fetch(`${API_BASE}/Messages`);
+        const json = await res.json();
+        messages = json.data || [];
+        renderChatroom();
+      } catch (err) {
+        console.error('Failed to fetch messages', err);
+      }
+    }
+
+    setInterval(fetchMessagesAndUpdate, 1000);
+
   </script>
 </body>
 </html>
