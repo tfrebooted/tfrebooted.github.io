@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Transformers RP Chat</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <title>Cyberion RP Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -61,7 +61,7 @@
       const pass = document.getElementById('password').value;
       const res = await fetch(`${API_BASE}/Users`, { headers: { 'Content-Type': 'application/json' } });
       const data = await res.json();
-      const users = Array.isArray(data.rows) ? data.rows : data;
+      const users = Array.isArray(data.rows) ? data.rows : [];
 
       const found = users.find(u => u.username === user);
       if (isSignup) {
@@ -89,13 +89,13 @@
 
     async function fetchData() {
       const charRes = await fetch(`${API_BASE}/Characters`);
-      characters = await charRes.json();
+      characters = (await charRes.json()).rows || [];
 
       const locRes = await fetch(`${API_BASE}/Chatrooms`);
-      chatrooms = await locRes.json();
+      chatrooms = (await locRes.json()).rows || [];
 
       const msgRes = await fetch(`${API_BASE}/Messages`);
-      messages = await msgRes.json();
+      messages = (await msgRes.json()).rows || [];
     }
 
     function renderSidebar() {
