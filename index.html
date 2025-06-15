@@ -216,21 +216,26 @@
       );
     
       // Sort filtered chatrooms so rooms with unread messages come first
-      const sortedChatrooms = [...filteredChatrooms].sort((a, b) => {
-        const idA = `${a.section}-${a.subsection}`;
-        const idB = `${b.section}-${b.subsection}`;
-    
-        const lastSeenA = lastViewedTimestamps[idA] ? new Date(lastViewedTimestamps[idA]) : new Date(0);
-        const lastSeenB = lastViewedTimestamps[idB] ? new Date(lastViewedTimestamps[idB]) : new Date(0);
-    
-        const hasUnreadA = messages.some(m => m.room === idA && new Date(m.timestamp) > lastSeenA);
-        const hasUnreadB = messages.some(m => m.room === idB && new Date(m.timestamp) > lastSeenB);
-    
-        if (hasUnreadA && !hasUnreadB) return -1; // A before B
-        if (!hasUnreadA && hasUnreadB) return 1;  // B before A
-    
-        return idA.localeCompare(idB);
+      const recentRooms = [];
+      const regularRooms = [];
+      
+      filteredChatrooms.forEach(loc => {
+        const roomId = `${loc.section}-${loc.subsection}`;
+        const lastSeen = new Date(lastViewedTimestamps[roomId] || 0);
+        const hasNew = messages.some(m =>
+          m.room === roomId &&
+          m.username !== currentUser && // Only count others' messages
+          new Date(m.timestamp) > lastSeen
+        );
+
+        if (hasNew && selectedRoom !== roomId) {
+          recentRooms.push(loc);
+        } else {
+          regularRooms.push(loc);
+        }
       });
+      
+      const sortedChatrooms = [...recentRooms, ...regularRooms];
     
       // Render chatroom buttons
       sortedChatrooms.forEach(loc => {
@@ -240,7 +245,12 @@
         btn.classList.toggle('active-room', selectedRoom === roomId);
     
         const lastSeen = lastViewedTimestamps[roomId] ? new Date(lastViewedTimestamps[roomId]) : new Date(0);
-        const hasNewMessage = messages.some(m => m.room === roomId && new Date(m.timestamp) > lastSeen);
+        const hasNewMessage = messages.some(m =>
+          m.room === roomId &&
+          m.username !== currentUser &&
+          new Date(m.timestamp) > lastSeen
+        );
+
     
         if (hasNewMessage && selectedRoom !== roomId) {
           btn.style.background = '#f90'; // orange/yellow
@@ -396,6 +406,7 @@
         if (!res.ok) return alert('Failed to send message');
         messages.push(payload[0]);
         msgInput.value = '';
+        renderSidebar();  // NEW: Re-sort & update sidebar highlighting
         renderChatroom();
       } catch (err) {
         alert('Error sending message');
