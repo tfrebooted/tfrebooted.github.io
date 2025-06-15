@@ -2,54 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Transformers RP Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyberion RP Chat</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Orbitron', sans-serif; background: #111; color: #eee; margin: 0; padding: 0; }
-    #login.active, #chat.active { display: block; }
-    #login, #chat { display: none; padding: 20px; }
-    .login-box { max-width: 320px; margin: 50px auto; background: #222; padding: 20px; border-radius: 8px; }
-    input { width: 100%; margin: 8px 0; padding: 8px; border-radius: 4px; border: none; }
-    button { padding: 10px 20px; background: #0ff; border: none; color: #000; font-weight: bold; cursor: pointer; border-radius: 4px; }
-    button:hover { background: #0cc; }
-    .chat-container { display: flex; height: 90vh; }
-    .sidebar { width: 220px; background: #222; padding: 10px; overflow-y: auto; }
-    .sidebar h3 { margin-top: 0; }
-    .sidebar button { width: 100%; margin: 4px 0; padding: 8px; background: #444; color: #eee; border: none; cursor: pointer; border-radius: 4px; }
-    .sidebar button:hover { background: #0ff; color: #000; }
-    .sidebar .active-room { background: #0ff; color: #000 !important; font-weight: bold; }
-    .main { flex-grow: 1; background: #111; display: flex; flex-direction: column; }
-    #roomHeader { padding: 10px; background: #222; font-weight: bold; }
-    #chatroom { flex-grow: 1; padding: 10px; overflow-y: auto; }
-    .chat-message { display: flex; align-items: flex-start; margin-bottom: 12px; }
-    .chat-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover; border: 2px solid #0ff; }
-    .chat-bubble { background: #222; padding: 10px; border-radius: 8px; max-width: 75%; }
-    .chat-user { font-weight: bold; color: #0ff; cursor: pointer; display: block; margin-bottom: 4px; }
-    .sendbar { padding: 10px; background: #222; display: flex; }
-    #messageInput { flex-grow: 1; padding: 8px; border-radius: 4px; border: none; }
-    #sendBtn { margin-left: 10px; }
-    #lockedMsg { padding: 10px; background: #800; color: #faa; display: none; }
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: #0e0e0e;
+      color: #eee;
+    }
+    .login-box, .signup-box, .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box, .signup-box {
+      background: #1a1a1a;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00f0ff;
+    }
+    input {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+      width: 200px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #00f0ff;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .chat-container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .sidebar h3 {
+      margin-top: 0;
+      font-size: 1.2em;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+    .sidebar button {
+      display: flex;
+      align-items: center;
+      background: #222;
+      margin: 5px 0;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s;
+    }
+    .sidebar button img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .sidebar button.active {
+      background: #00f0ff;
+      color: #000;
+      font-weight: bold;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      background: #1a1a1a;
+    }
+    .chatroom {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .sendbar {
+      display: flex;
+    }
+    .sendbar input {
+      flex: 1;
+      margin-right: 10px;
+    }
+    .character-locked {
+      color: #f00;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+    .chat-user {
+      font-weight: bold;
+      color: #0ff;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-
-  <!-- Login View -->
   <div id="login" class="active">
     <div class="login-box">
-      <h2>Login</h2>
-      <input id="username" placeholder="Username" autocomplete="off" />
-      <input id="password" type="password" placeholder="Password" autocomplete="off" />
+      <h2>Enter Username</h2>
+      <input id="username" placeholder="Username" /><br />
       <button onclick="submitAuth()">Enter</button>
-      <p style="margin-top:10px; font-size: 0.9em;">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfxD-aSS9bBj2GzrhaZ3FoZhDKcr6B1gz6M5CMVYyA14MeRxA/viewform?usp=dialog" target="_blank" style="color:#0ff">Request Account</a>
-      </p>
+      <p style="margin-top:10px; font-size: 0.9em;"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfxD-aSS9bBj2GzrhaZ3FoZhDKcr6B1gz6M5CMVYyA14MeRxA/viewform?usp=dialog" target="_blank" style="color:#0ff">Request Account</a></p>
       <p style="margin-top:10px; font-size: 0.9em; cursor:pointer; color:#0ff" onclick="adminBypass()">Admin Debug Mode</p>
     </div>
   </div>
 
-  <!-- Chat View -->
-  <div id="chat">
+  <div id="chat" style="display:none">
     <div class="chat-container">
       <div class="sidebar">
         <h3>Characters</h3>
@@ -59,35 +138,41 @@
       </div>
       <div class="main">
         <div id="roomHeader">Select a room</div>
-        <div id="chatroom"></div>
+        <div class="chatroom" id="chatroom"></div>
         <div class="sendbar">
           <input id="messageInput" placeholder="Type message..." disabled />
-          <button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+          <button onclick="sendMessage()" disabled id="sendBtn">Send</button>
         </div>
-        <div id="lockedMsg">Request @definitely.kevin in Discord for a character!</div>
+        <div class="character-locked" id="lockedMsg" style="display:none">
+          Request @definitely.kevin in Discord for a character!
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Script -->
   <script>
+    let currentUser = null;
+    let characters = [];
+    let chatrooms = [];
+    let messages = [];
+    let selectedCharacter = null;
+    let selectedRoom = null;
+
     const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
-    let currentUser = null, characters = [], chatrooms = [], messages = [], selectedCharacter = null, selectedRoom = null;
 
     async function submitAuth() {
       const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value.trim();
-      if (!user || !pass) return alert('Please enter username and password');
-
       try {
         const res = await fetch(`${API_BASE}/Users`);
-        const json = await res.json();
-        const found = json.data.find(u => u.Username.toLowerCase() === user.toLowerCase());
-        if (!found || found.Password !== pass) return alert('Invalid username or password');
-        currentUser = found.Username;
-        await loadApp();
-      } catch (err) {
-        alert('Login error'); console.error(err);
+        const data = await res.json();
+        const users = data.data || [];
+        const found = users.find(u => u.username === user);
+        if (!found) return alert('User not found. Use the Request Account link to sign up.');
+        currentUser = user;
+        loadApp();
+      } catch (e) {
+        alert('Error retrieving users.');
+        console.error(e);
       }
     }
 
@@ -97,132 +182,98 @@
     }
 
     async function loadApp() {
-      document.getElementById('login').classList.remove('active');
-      document.getElementById('chat').classList.add('active');
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('chat').style.display = 'flex';
       await fetchData();
       renderSidebar();
-      selectedCharacter = null;
-      selectedRoom = null;
-      renderChatroom();
     }
 
     async function fetchData() {
-      characters = (await (await fetch(`${API_BASE}/Characters`)).json()).data || [];
-      chatrooms = (await (await fetch(`${API_BASE}/Chatrooms`)).json()).data || [];
-      messages = (await (await fetch(`${API_BASE}/Messages`)).json()).data || [];
+      const charRes = await fetch(`${API_BASE}/Characters`);
+      const charJson = await charRes.json();
+      characters = charJson.data || [];
+
+      const locRes = await fetch(`${API_BASE}/Chatrooms`);
+      const locJson = await locRes.json();
+      chatrooms = locJson.data || [];
+
+      const msgRes = await fetch(`${API_BASE}/Messages`);
+      const msgJson = await msgRes.json();
+      messages = msgJson.data || [];
     }
 
     function renderSidebar() {
       const charDiv = document.getElementById('charList');
+      charDiv.innerHTML = '';
+      const userChars = characters.filter(c => c.username === currentUser);
+      if (userChars.length === 0) {
+        document.getElementById('lockedMsg').style.display = 'block';
+      } else {
+        document.getElementById('lockedMsg').style.display = 'none';
+        userChars.forEach(char => {
+          const btn = document.createElement('button');
+          btn.innerHTML = `<img src="${char['pfp link']}" alt="pfp"> ${char.character}`;
+          btn.className = selectedCharacter && selectedCharacter.name === char.character ? 'active' : '';
+          btn.onclick = () => {
+            selectedCharacter = { name: char.character, pfp: char['pfp link'] };
+            renderSidebar();
+          };
+          charDiv.appendChild(btn);
+        });
+      }
+
       const locDiv = document.getElementById('locList');
-      charDiv.innerHTML = locDiv.innerHTML = '';
-
-      const userChars = characters.filter(c => c.username.toLowerCase() === currentUser.toLowerCase());
-      document.getElementById('lockedMsg').style.display = userChars.length ? 'none' : 'block';
-
-      userChars.forEach(char => {
-        const btn = document.createElement('button');
-        btn.textContent = char.character;
-        btn.onclick = () => selectedCharacter = {
-          name: char.character, pfp: char["pfp link"], username: char.username
-        };
-        charDiv.appendChild(btn);
-      });
-
+      locDiv.innerHTML = '';
       chatrooms.forEach(loc => {
         const btn = document.createElement('button');
-        const roomId = `${loc.section}-${loc.subsection}`;
         btn.textContent = `${loc.section} > ${loc.subsection}`;
-        btn.classList.toggle('active-room', selectedRoom === roomId);
+        btn.className = selectedRoom === `${loc.section}-${loc.subsection}` ? 'active' : '';
         btn.onclick = () => {
-          selectedRoom = roomId;
+          selectedRoom = `${loc.section}-${loc.subsection}`;
+          renderSidebar();
           renderChatroom();
-          renderSidebar(); // update highlight
         };
         locDiv.appendChild(btn);
       });
     }
 
     function renderChatroom() {
-      const roomHeader = document.getElementById('roomHeader');
+      document.getElementById('roomHeader').textContent = selectedRoom;
       const chatDiv = document.getElementById('chatroom');
-      const msgInput = document.getElementById('messageInput');
-      const sendBtn = document.getElementById('sendBtn');
-
-      if (!selectedRoom) {
-        roomHeader.textContent = 'Select a room';
-        chatDiv.innerHTML = '';
-        msgInput.disabled = true;
-        sendBtn.disabled = true;
-        return;
-      }
-
-      roomHeader.textContent = selectedRoom;
       chatDiv.innerHTML = '';
-
-      messages.filter(m => m.room === selectedRoom).forEach(m => {
-        const msgWrap = document.createElement('div');
-        msgWrap.className = 'chat-message';
-
-        const avatar = document.createElement('img');
-        avatar.src = m.pfp || '';
-        avatar.className = 'chat-avatar';
-        avatar.alt = m.charname;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'chat-bubble';
-        bubble.innerHTML = `<span class="chat-user" onclick="showUser('${m.username}')">${m.charname}</span>${escapeHtml(m.text)}`;
-
-        msgWrap.appendChild(avatar);
-        msgWrap.appendChild(bubble);
-        chatDiv.appendChild(msgWrap);
+      const relevant = messages.filter(m => m.room === selectedRoom);
+      relevant.forEach(m => {
+        const msg = document.createElement('div');
+        msg.innerHTML = `<span class='chat-user' onclick='showUser("${m.username}")'>${m.charname}</span>: ${m.text}`;
+        chatDiv.appendChild(msg);
       });
-
       const enabled = !!selectedCharacter;
-      msgInput.disabled = !enabled;
-      sendBtn.disabled = !enabled;
-      if (enabled) msgInput.focus();
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-
-    }
-
-    function escapeHtml(text) {
-      return text.replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
+      document.getElementById('messageInput').disabled = !enabled;
+      document.getElementById('sendBtn').disabled = !enabled;
     }
 
     function showUser(username) {
-      alert(`User: ${username}`);
+      alert('User: ' + username);
     }
 
     async function sendMessage() {
-      const msgInput = document.getElementById('messageInput');
-      const text = msgInput.value.trim();
-      if (!text || !selectedCharacter || !selectedRoom) return alert('Select a character and room first');
-
+      const msg = document.getElementById('messageInput').value;
+      if (!msg || !selectedCharacter || !selectedRoom) return;
       const payload = [{
         room: selectedRoom,
         charname: selectedCharacter.name,
         pfp: selectedCharacter.pfp,
-        text: text,
-        username: currentUser,
-        timestamp: new Date().toISOString()
+        text: msg,
+        username: currentUser
       }];
-
-      try {
-        const res = await fetch(`${API_BASE}/Messages`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) return alert('Failed to send message');
-        messages.push(payload[0]);
-        msgInput.value = '';
-        renderChatroom();
-      } catch (err) {
-        alert('Error sending message');
-        console.error(err);
-      }
+      await fetch(`${API_BASE}/Messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      messages.push(payload[0]);
+      document.getElementById('messageInput').value = '';
+      renderChatroom();
     }
   </script>
 </body>
