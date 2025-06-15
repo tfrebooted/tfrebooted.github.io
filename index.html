@@ -33,6 +33,8 @@
   </style>
 </head>
 <body>
+
+  <!-- Login View -->
   <div id="login" class="active">
     <div class="login-box">
       <h2>Login</h2>
@@ -45,6 +47,8 @@
       <p style="margin-top:10px; font-size: 0.9em; cursor:pointer; color:#0ff" onclick="adminBypass()">Admin Debug Mode</p>
     </div>
   </div>
+
+  <!-- Chat View -->
   <div id="chat">
     <div class="chat-container">
       <div class="sidebar">
@@ -64,6 +68,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Script -->
   <script>
     const API_BASE = 'https://sheets.livepolls.app/api/spreadsheets/3f3f36a9-ffa1-453e-b4f1-57bd92e4d55c';
     let currentUser = null, characters = [], chatrooms = [], messages = [], selectedCharacter = null, selectedRoom = null;
@@ -117,9 +123,8 @@
       userChars.forEach(char => {
         const btn = document.createElement('button');
         btn.textContent = char.character;
-        btn.onclick = () => {
-          selectedCharacter = { name: char.character, pfp: char["pfp link"], username: char.username };
-          renderChatroom();
+        btn.onclick = () => selectedCharacter = {
+          name: char.character, pfp: char["pfp link"], username: char.username
         };
         charDiv.appendChild(btn);
       });
@@ -132,7 +137,7 @@
         btn.onclick = () => {
           selectedRoom = roomId;
           renderChatroom();
-          renderSidebar();
+          renderSidebar(); // update highlight
         };
         locDiv.appendChild(btn);
       });
@@ -178,6 +183,7 @@
       sendBtn.disabled = !enabled;
       if (enabled) msgInput.focus();
       chatDiv.scrollTop = chatDiv.scrollHeight;
+
     }
 
     function escapeHtml(text) {
