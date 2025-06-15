@@ -63,9 +63,10 @@
       try {
         const res = await fetch(`${API_BASE}/Users`, { headers: { 'Content-Type': 'application/json' } });
         const data = await res.json();
-        const users = Array.isArray(data.rows) ? data.rows : [];
+        const users = Array.isArray(data) ? data : (Array.isArray(data.rows) ? data.rows : []);
 
         const found = users.find(u => u.username === user);
+
         if (isSignup) {
           if (found) return alert('Username already exists');
           await fetch(`${API_BASE}/Users`, {
