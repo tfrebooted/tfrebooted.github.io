@@ -82,6 +82,10 @@
   <a href="https://tfrebooted.github.io">&larr; Back to the roleplay</a>
   <h1>Character Directory</h1>
 
+  <div id="counts" style="margin-bottom: 10px; font-size: 1rem; color: #aaa;">
+    Total # of Characters: 0 | Total # of Users: 0
+  </div>
+
   <div class="search-bars">
     <input type="text" id="searchChar" placeholder="Search by character name..." />
     <input type="text" id="searchUser" placeholder="Search by username..." />
@@ -117,6 +121,12 @@
       const sortValue = document.getElementById('sortSelect').value;
       const listDiv = document.getElementById('charList');
       listDiv.innerHTML = '';
+
+      // Calculate distinct characters and usernames
+      const charSet = new Set(characters.map(c => c.character));
+      const userSet = new Set(characters.map(c => c.username));
+      document.getElementById('counts').innerText = 
+        `Total # of Characters: ${charSet.size} | Total # of Users: ${userSet.size}`;
     
       let filtered = characters.filter(c =>
         c.character.toLowerCase().includes(nameFilter) &&
