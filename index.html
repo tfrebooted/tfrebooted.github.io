@@ -144,7 +144,7 @@
       chatrooms.forEach(loc => {
         const btn = document.createElement('button');
         const roomId = `${loc.section}-${loc.subsection}`;
-        btn.textContent = ${loc.section} > ${loc.subsection};
+        btn.textContent = `${loc.section} > ${loc.subsection}`;
         btn.classList.toggle('active-room', selectedRoom === roomId);
         if (hasNewMessage && selectedRoom !== roomId) {
           btn.style.background = '#f90'; // orange highlight for new messages
